@@ -40,10 +40,7 @@ def retrieve_organizations():
     for i in response_data['organizations']:
         zendesk_organization_ids.append(i['id'])
 
-    # print('There are ' + str(response_data['count']) + ' organizations')
     return response_data['count']
-
-    # print('Zendesk organization IDs: ' + str(zendesk_organization_ids))
 
 # _______________________________________________________________
 # Deleting organizations found above
