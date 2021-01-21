@@ -5,7 +5,7 @@
 # _______________________________________________________________
 # Importing requirements 
 # _______________________________________________________________
-import requests, json, time
+import requests, json
 
 # _______________________________________________________________
 # Initializing variables
@@ -60,7 +60,6 @@ def retrieve_user_tickets():
         'Authorization': zendesk_authorization,
     }
 
-
     for i in zendesk_user_ids: # IDs of users
         get_url = 'https://' + zendesk_subdomain + '.zendesk.com/api/v2/users/' + str(i) + '/related'
         # API call to get users
@@ -73,7 +72,7 @@ def retrieve_user_tickets():
         for count, value in enumerate(response_data['user_related'].values(), 1): 
             if value != 0: # If there's a non-zero, then don't mark this user as having no tickets
                 break
-            elif count == len(response_data['user_related']): # Add user ID to array if they have no tickets associated
+            elif value == 0 and count == len(response_data['user_related']): # Add user ID to array if they have no tickets associated
                 zendek_nonticket_users.append(i)
 
     return zendek_nonticket_users
@@ -83,7 +82,6 @@ def retrieve_user_tickets():
 # Deleting users found above
 # _______________________________________________________________
 def delete_users():
-    # print('Starting deletion')
 
     delete_url = 'https://' + zendesk_subdomain + '.zendesk.com/api/v2/users/destroy_many?ids='
 
@@ -94,10 +92,10 @@ def delete_users():
 
     # Convert the array of users into a comma delimited string
     users_list = ''
-    for i in zendesk_user_ids:    
+    for i in zendek_nonticket_users:    
         users_list += str(i) + ','
 
-    response = requests.request("DELETE", delete_url + str(users_list), headers=headers, data=payload)
+    response = requests.request("DELETE", delete_url + str(users_list), headers = headers, data = payload)
 
     return(response.text)
 
@@ -119,7 +117,8 @@ while api_new_page:
     
     # Fetching associated tickets with the users
     retrieve_user_tickets()
-    print('Users with no associated tickets:' + str(zendek_nonticket_users))
+    print('Number of users with no associated tickets: ' + str(len(zendek_nonticket_users)))
+    # print('Users with no associated tickets: ' + str(zendek_nonticket_users))
 
     # Delete users that don't have any associated tickets
     print(delete_users())
