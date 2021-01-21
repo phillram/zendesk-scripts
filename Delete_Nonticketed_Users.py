@@ -53,16 +53,18 @@ def retrieve_users():
 # _______________________________________________________________
 def retrieve_user_tickets():
 
-    zendek_nonticket_users.clear() # Restart the array for this run
+    # Empty array from previous loops
+    zendek_nonticket_users.clear()
 
     payload = {}
     headers = {
         'Authorization': zendesk_authorization,
     }
 
-    for i in zendesk_user_ids: # IDs of users
+    # IDs of users to search for tickets associated
+    for i in zendesk_user_ids:
         get_url = 'https://' + zendesk_subdomain + '.zendesk.com/api/v2/users/' + str(i) + '/related'
-        # API call to get users
+        # API call to get users associated ticket numbers
         response = requests.request("GET", get_url, headers = headers, data = payload)
 
         # Parse the response to JSON
@@ -70,13 +72,14 @@ def retrieve_user_tickets():
 
         # Searching feedback records for people with tickets associated
         for count, value in enumerate(response_data['user_related'].values(), 1): 
-            if value != 0: # If there's a non-zero, then don't mark this user as having no tickets
+            # If there's a non-zero, then don't mark this user as having no tickets
+            if value != 0:
                 break
-            elif value == 0 and count == len(response_data['user_related']): # Add user ID to array if they have no tickets associated
+            # Add user ID to array if they have no tickets associated
+            elif value == 0 and count == len(response_data['user_related']):
                 zendek_nonticket_users.append(i)
 
     return zendek_nonticket_users
-
 
 # _______________________________________________________________
 # Deleting users found above
