@@ -38,6 +38,11 @@ def retrieve_users():
 
     # Parse the response to JSON
     response_data = response.json()
+    
+    # Quit if the API returns an error
+    if 'error' in response_data:
+        print('Zendesk API error: ' + response_data['error'])
+        exit()
 
     # Getting a list of the user IDs
     for i in response_data['users']:

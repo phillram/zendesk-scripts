@@ -42,6 +42,12 @@ def create_organizations():
             # {"name": random.choice(pokemon_names)}
     }
     response = requests.request("POST", url, headers = headers, data = json.dumps(payload))
+
+    # Quit if the API returns an error
+    if 'error' in response_data:
+        print('Zendesk API error: ' + response_data['error'])
+        exit()
+
     print(response.text)
 
 
