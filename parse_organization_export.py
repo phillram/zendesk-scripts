@@ -5,7 +5,7 @@
 # _______________________________________________________________
 # Importing requirements
 # _______________________________________________________________
-import json, re, numpy, pandas
+import json, re, pandas
 
 # _______________________________________________________________
 # Set filenames of input and output file
